@@ -44,6 +44,8 @@ input{width:100%;height:46px;border:2px solid #111;border-radius:7px;padding:7px
 <input id="goldPrice" type="number" step="0.01">
 <label>أدخل العيار أو السهم المطلوب</label>
 <input id="goldPurity" type="number" step="0.1" placeholder="مثال: 21 أو 875">
+      <label>أدخل الوزن بالجرام</label>
+      <input id="goldWeight" type="number" step="0.001" placeholder="مثال: 5.25">
 <div id="goldResult" class="result">—</div>
 </div>
 
@@ -54,6 +56,8 @@ input{width:100%;height:46px;border:2px solid #111;border-radius:7px;padding:7px
 <input id="silverPrice" type="number" step="0.01">
 <label>أدخل العيار أو السهم المطلوب</label>
 <input id="silverPurity" type="number" step="0.1" placeholder="مثال: 925 أو 999">
+      <label>أدخل الوزن بالجرام</label>
+      <input id="silverWeight" type="number" step="0.001" placeholder="مثال: 10.5">
 <div id="silverResult" class="result">—</div>
 </div>
 
@@ -65,22 +69,38 @@ function goldShares(v){
 function calc(){
   const goldPrice = parseFloat(document.getElementById('goldPrice').value);
   const goldInput = parseFloat(document.getElementById('goldPurity').value);
+  const goldWeight = parseFloat(document.getElementById('goldWeight').value);
   const silverPrice = parseFloat(document.getElementById('silverPrice').value);
   const silverInput = parseFloat(document.getElementById('silverPurity').value);
+  const silverWeight = parseFloat(document.getElementById('silverWeight').value);
 
   const goldResult = document.getElementById('goldResult');
   const silverResult = document.getElementById('silverResult');
 
-  if(goldPrice > 0 && goldInput > 0){
+  if(goldPrice > 0 && goldInput > 0 && goldWeight > 0){
     const shares = goldShares(goldInput);
-    goldResult.textContent = (goldPrice * shares / 875).toFixed(2);
+    const gramPrice = goldPrice * shares / 875;
+    const total = gramPrice * goldWeight;
+    goldResult.innerHTML =
+      'سعر الجرام: <b>' + gramPrice.toFixed(2) + '</b><br>' +
+      'الوزن: <b>' + goldWeight.toFixed(3) + ' جم</b><br>' +
+      'إجمالي المبلغ: <b>' + total.toFixed(2) + '</b>';
   } else {
     goldResult.textContent = '—';
   }
 
-  if(silverPrice > 0 && silverInput > 0){
+  if(silverPrice > 0 && silverInput > 0 && silverWeight > 0){
     const shares = silverInput <= 1000 ? silverInput : 0;
-    silverResult.textContent = shares > 0 ? (silverPrice * shares / 1000).toFixed(2) : '—';
+    if(shares > 0){
+      const gramPrice = silverPrice * shares / 1000;
+      const total = gramPrice * silverWeight;
+      silverResult.innerHTML =
+        'سعر الجرام: <b>' + gramPrice.toFixed(2) + '</b><br>' +
+        'الوزن: <b>' + silverWeight.toFixed(3) + ' جم</b><br>' +
+        'إجمالي المبلغ: <b>' + total.toFixed(2) + '</b>';
+    } else {
+      silverResult.textContent = '—';
+    }
   } else {
     silverResult.textContent = '—';
   }
